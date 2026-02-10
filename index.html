@@ -217,9 +217,9 @@ body {
 /* CONTENT AREA */
 .content-area {
   flex: 1;
-  padding: 40px;
-  max-width: 1200px;
+  padding: 40px 48px;
   overflow-y: auto;
+  min-width: 0;
 }
 
 .page-header {
@@ -238,7 +238,7 @@ body {
   color: var(--text-muted);
   font-size: 15px;
   line-height: 1.6;
-  max-width: 640px;
+  max-width: 70ch;
 }
 
 /* STEP PANELS */
@@ -872,18 +872,115 @@ body {
   font-size: 28px;
 }
 
-/* RESPONSIVE */
-@media (max-width: 1100px) {
-  .step-sidebar { width: 220px; }
-  .measure-layout, .config-grid, .review-measures-grid, .review-detail-grid {
-    grid-template-columns: 1fr;
-  }
+.config-inner-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
 }
 
-@media (max-width: 768px) {
+/* RESPONSIVE: Extra large screens (> 1600px) */
+@media (min-width: 1600px) {
+  .content-area { padding: 48px 64px; }
+  .page-header h1 { font-size: 32px; }
+  .measure-layout { gap: 32px; }
+  .panel-body { max-height: 700px; }
+}
+
+/* RESPONSIVE: Large screens (1200–1600px) — default, no overrides needed */
+
+/* RESPONSIVE: Medium-large (900–1199px) */
+@media (max-width: 1199px) {
+  .step-sidebar { width: 220px; padding: 28px 16px; }
+  .content-area { padding: 32px 28px; }
+  .config-grid { gap: 16px; }
+  .review-detail-grid { gap: 12px; }
+}
+
+/* RESPONSIVE: Tablets / medium screens (768–899px) */
+@media (max-width: 899px) {
   .step-sidebar { display: none; }
-  .content-area { padding: 24px 16px; }
+  .content-area { padding: 28px 24px; }
   .measure-layout { grid-template-columns: 1fr; }
+  .config-grid { grid-template-columns: 1fr; }
+  .config-card.full-width { grid-column: auto; }
+  .config-card.full-width .config-inner-grid {
+    grid-template-columns: 1fr;
+  }
+  .review-measures-grid { grid-template-columns: 1fr; }
+  .review-detail-grid { grid-template-columns: 1fr; }
+  .top-bar { padding: 0 20px; }
+  .deploy-modal { width: 90vw; max-width: 480px; padding: 32px 24px; }
+}
+
+/* RESPONSIVE: Small tablets / large phones (600–767px) */
+@media (max-width: 767px) {
+  .content-area { padding: 24px 16px; }
+  .page-header h1 { font-size: 22px; }
+  .page-header p { font-size: 14px; }
+  .category-tabs { padding: 10px 12px; gap: 4px; }
+  .category-tab { font-size: 11px; padding: 5px 10px; }
+  .panel-header { padding: 14px 16px; }
+  .panel-header h2 { font-size: 14px; }
+  .panel-body { padding: 12px; max-height: 450px; }
+  .measure-card { padding: 12px 14px; }
+  .measure-card .card-title { font-size: 13px; }
+  .actions-bar { flex-direction: column-reverse; gap: 12px; }
+  .actions-bar .btn { width: 100%; justify-content: center; }
+  .actions-bar > div { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+  .actions-bar > div .btn { width: 100%; justify-content: center; }
+  .config-card { padding: 18px; }
+  .deploy-modal { padding: 28px 20px; }
+}
+
+/* RESPONSIVE: Mobile phones (< 600px) */
+@media (max-width: 599px) {
+  .top-bar { height: 56px; padding: 0 12px; }
+  .logo-text { font-size: 15px; }
+  .logo-text span { display: none; }
+  .logo-icon { width: 30px; height: 30px; font-size: 12px; border-radius: 6px; }
+  .main-container { margin-top: 56px; min-height: calc(100vh - 56px); }
+  .content-area { padding: 20px 12px; }
+  .page-header { margin-bottom: 24px; }
+  .page-header h1 { font-size: 20px; }
+  .page-header p { font-size: 13px; }
+  .panel-section { border-radius: 10px; }
+  .panel-body { max-height: 380px; padding: 10px; }
+  .measure-card { padding: 10px 12px; }
+  .measure-card .card-title { font-size: 13px; padding-right: 28px; }
+  .measure-card .card-desc { font-size: 11px; }
+  .card-meta { gap: 4px; }
+  .meta-tag { font-size: 9px; padding: 2px 6px; }
+  .category-badge { font-size: 9px; padding: 2px 6px; }
+  .card-action-btn { width: 24px; height: 24px; font-size: 14px; top: 10px; right: 10px; }
+  .category-tabs { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; padding: 8px 10px; }
+  .category-tab { flex-shrink: 0; }
+  .form-input, .form-select { padding: 9px 12px; font-size: 13px; }
+  .form-label { font-size: 11px; }
+  .config-card h3 { font-size: 13px; }
+  .config-card .config-desc { font-size: 11px; }
+  .config-card.full-width .config-inner-grid {
+    grid-template-columns: 1fr;
+  }
+  .btn { padding: 10px 18px; font-size: 13px; }
+  .review-measure-item { padding: 10px 12px; }
+  .review-measure-item .rm-name { font-size: 13px; }
+  .review-detail-card { padding: 14px 16px; }
+  .review-detail-card .value { font-size: 12px; }
+  .deploy-modal { width: 94vw; padding: 24px 16px; }
+  .deploy-modal h2 { font-size: 18px; }
+  .deploy-step { font-size: 12px; padding: 8px 0; }
+  .toast { left: 12px; right: 12px; bottom: 12px; font-size: 13px; }
+  .search-bar input { font-size: 13px; padding: 8px 12px 8px 34px; }
+}
+
+/* RESPONSIVE: Very small phones (< 380px) */
+@media (max-width: 379px) {
+  .content-area { padding: 16px 8px; }
+  .page-header h1 { font-size: 18px; }
+  .panel-header h2 { font-size: 12px; gap: 6px; }
+  .panel-body { padding: 8px; }
+  .top-bar { padding: 0 8px; }
+  .logo { gap: 8px; }
 }
 
 /* SEARCH */
@@ -1093,7 +1190,7 @@ body {
         <div class="config-card full-width">
           <h3>Dashboard Options</h3>
           <p class="config-desc">Customize how the dashboard presents the selected measures.</p>
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div class="config-inner-grid">
             <div class="form-group">
               <label class="form-label">Program Name</label>
               <input id="program-name" type="text" class="form-input" value="" placeholder="e.g., Metro City CP Program">
