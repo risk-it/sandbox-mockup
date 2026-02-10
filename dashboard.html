@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AER Performance Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Fraunces:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080A0F;--surface:#0E1117;--surface-alt:#151A24;--border:#1E2536;--border-light:#2A3348;--text:#E8ECF4;--text-muted:#8892A8;--text-dim:#5A6478;--green:#3ECFB4;--green-bg:rgba(62,207,180,.08);--gold:#F5A623;--gold-bg:rgba(245,166,35,.08);--blue:#4A9EFF;--blue-bg:rgba(74,158,255,.08);--purple:#7B8CFF;--purple-bg:rgba(123,140,255,.08);--rose:#E86C8D;--rose-bg:rgba(232,108,141,.08);--red:#FF6B6B;--radius:10px;--radius-lg:16px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.dash-top{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(8,10,15,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 24px}
+.dash-logo{display:flex;align-items:center;gap:10px;font-family:'Fraunces',serif;font-size:16px;font-weight:600}
+.dash-logo-icon{width:30px;height:30px;background:linear-gradient(135deg,var(--green),var(--blue));border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--bg)}
+.dash-meta{display:flex;align-items:center;gap:16px;font-size:12px;color:var(--text-muted)}
+.live-dot{width:8px;height:8px;background:var(--green);border-radius:50%;animation:pulse 2s ease infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(62,207,180,.4)}50%{box-shadow:0 0 0 6px rgba(62,207,180,0)}}
+.separator{width:1px;height:20px;background:var(--border)}
+.back-link{font-size:12px;color:var(--blue);text-decoration:none}
+.dash-body{margin-top:56px;padding:24px;max-width:1600px;margin-left:auto;margin-right:auto}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;position:relative;overflow:hidden}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.kpi-card.c1::before{background:linear-gradient(90deg,var(--green),transparent)}.kpi-card.c2::before{background:linear-gradient(90deg,var(--gold),transparent)}.kpi-card.c3::before{background:linear-gradient(90deg,var(--purple),transparent)}.kpi-card.c4::before{background:linear-gradient(90deg,var(--rose),transparent)}
+.kpi-label{font-size:12px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+.kpi-value{font-family:'Fraunces',serif;font-size:32px;font-weight:700;margin-bottom:4px}
+.kpi-card.c1 .kpi-value{color:var(--green)}.kpi-card.c2 .kpi-value{color:var(--gold)}.kpi-card.c3 .kpi-value{color:var(--purple)}.kpi-card.c4 .kpi-value{color:var(--rose)}
+.kpi-change{font-size:12px;font-weight:600;display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:10px;color:var(--green);background:var(--green-bg)}
+.kpi-sub{font-size:11px;color:var(--text-dim);margin-top:6px}
+.grid-2{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px}
+.grid-half{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;overflow:hidden}
+.panel-title{font-size:14px;font-weight:600;margin-bottom:4px;display:flex;align-items:center;justify-content:space-between}
+.panel-sub{font-size:11px;color:var(--text-dim);margin-bottom:16px}
+.chart-tabs{display:flex;gap:4px;margin-bottom:16px}.chart-tab{padding:4px 12px;border-radius:6px;font-size:11px;font-weight:500;cursor:pointer;color:var(--text-dim);background:transparent;border:1px solid transparent;transition:all .2s}.chart-tab.active{background:var(--surface-alt);color:var(--text);border-color:var(--border)}
+.period-sel{font-size:11px;color:var(--text-dim);border:1px solid var(--border);border-radius:6px;padding:3px 10px;background:transparent;cursor:pointer}
+svg text{font-family:'DM Sans',sans-serif}
+.ba-badge{font-size:10px;padding:3px 10px;border-radius:10px;font-weight:600}
+.ba-badge.before{color:var(--rose);background:var(--rose-bg)}.ba-badge.after{color:var(--green);background:var(--green-bg)}
+.ba-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px}
+.ba-row:last-child{border-bottom:none}
+.ba-label{color:var(--text-muted)}.ba-val{font-weight:600;font-family:'JetBrains Mono',monospace;font-size:13px}
+.donut-wrap{display:flex;align-items:center;gap:20px;justify-content:center}
+.legend{display:flex;flex-direction:column;gap:8px}.legend-item{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-muted)}.legend-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+.mini-table{width:100%;font-size:12px;border-collapse:collapse}.mini-table th{text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);color:var(--text-dim);font-weight:500;font-size:10px;text-transform:uppercase;letter-spacing:.06em}.mini-table td{padding:8px 10px;border-bottom:1px solid var(--border);color:var(--text-muted)}.mini-table tr:last-child td{border-bottom:none}.val{color:var(--text);font-weight:500;font-family:'JetBrains Mono',monospace}.trend-up{color:var(--green)}.trend-dn{color:var(--red)}
+.alert-strip{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 20px;margin-bottom:16px;display:flex;align-items:center;gap:12px;font-size:13px}.alert-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}.alert-dot.warn{background:var(--gold)}.alert-dot.ok{background:var(--green)}.alert-text{color:var(--text-muted);flex:1}.alert-time{font-size:11px;color:var(--text-dim)}
+.heatmap-cell{rx:3;transition:opacity .2s}.heatmap-cell:hover{opacity:.8;stroke:white;stroke-width:1}
+@media(max-width:1100px){.kpi-row{grid-template-columns:1fr 1fr}.grid-2,.grid-half,.grid-3{grid-template-columns:1fr}}
+@media(max-width:600px){.kpi-row{grid-template-columns:1fr}.dash-body{padding:16px}.kpi-value{font-size:26px}.dash-meta .separator,.dash-meta>span{display:none}}
+</style>
+</head>
+<body>
+<header class="dash-top">
+<div class="dash-logo"><div class="dash-logo-icon">AER</div>Performance Dashboard</div>
+<div class="dash-meta"><div class="live-dot"></div><span>Live</span><div class="separator"></div><span>Updated: Feb 10, 2026 · 2:45 PM</span><div class="separator"></div><span>Metro City Community Paramedicine Program</span><div class="separator"></div><a href="index.html" class="back-link">← Configurator</a></div>
+</header>
+<div class="dash-body">
+
+<div class="alert-strip"><div class="alert-dot warn"></div><div class="alert-text"><strong>Threshold Alert:</strong> 911 run volume increased 12% this week — approaching pre-enrollment baseline for 3 patients.</div><div class="alert-time">2 hours ago</div></div>
+
+<!-- KPIs -->
+<div class="kpi-row">
+<div class="kpi-card c1"><div class="kpi-label">Unplanned Transports</div><div class="kpi-value">&darr; 34%</div><span class="kpi-change">&darr; 127 &rarr; 84</span><div class="kpi-sub">12-month pre vs. post enrollment</div></div>
+<div class="kpi-card c2"><div class="kpi-label">Estimated Cost Savings</div><div class="kpi-value">$482K</div><span class="kpi-change">+$86K this quarter</span><div class="kpi-sub">Cumulative since program launch</div></div>
+<div class="kpi-card c3"><div class="kpi-label">ED Wall Time Reduction</div><div class="kpi-value">&darr; 28%</div><span class="kpi-change">&darr; 4,320 &rarr; 3,110 min</span><div class="kpi-sub">Monthly average, AER population</div></div>
+<div class="kpi-card c4"><div class="kpi-label">After-Midnight Runs</div><div class="kpi-value">&darr; 41%</div><span class="kpi-change">&darr; 89 &rarr; 52 /mo</span><div class="kpi-sub">0000-0600 hours, enrolled patients</div></div>
+</div>
+
+<!-- Temporal chart + Donut -->
+<div class="grid-2">
+<div class="panel">
+<div class="panel-title"><span>911 Run Volume — Before &amp; After AER Enrollment</span><select class="period-sel"><option>24 Months</option><option>12 Months</option></select></div>
+<div class="panel-sub">Monthly 911 calls for enrolled patients. Dashed line marks program launch.</div>
+<div class="chart-tabs"><div class="chart-tab active">All Runs</div><div class="chart-tab">Transport Only</div><div class="chart-tab">After Midnight</div></div>
+<svg viewBox="0 0 700 220" width="100%" id="line-chart"></svg>
+</div>
+<div class="panel">
+<div class="panel-title">Referral Sources</div>
+<div class="panel-sub">Patient entry points into AER program</div>
+<div class="donut-wrap">
+<svg viewBox="0 0 160 160" width="160" id="donut-chart"></svg>
+<div class="legend" id="donut-legend"></div>
+</div>
+</div>
+</div>
+
+<!-- Before/After -->
+<div class="grid-half">
+<div class="panel">
+<div class="panel-title"><span>Pre-Enrollment Baseline</span><span class="ba-badge before">12 Mo Before</span></div>
+<div id="ba-before"></div>
+</div>
+<div class="panel">
+<div class="panel-title"><span>Post-Enrollment Outcomes</span><span class="ba-badge after">12 Mo After</span></div>
+<div id="ba-after"></div>
+</div>
+</div>
+
+<!-- Cost Chart + Heatmap + Table -->
+<div class="grid-3">
+<div class="panel">
+<div class="panel-title">Cumulative Cost Savings</div>
+<div class="panel-sub">Monthly savings vs. traditional response</div>
+<svg viewBox="0 0 320 180" width="100%" id="cost-chart"></svg>
+</div>
+<div class="panel">
+<div class="panel-title">Hourly Run Heatmap</div>
+<div class="panel-sub">Call volume by hour &amp; day of week</div>
+<svg viewBox="0 0 320 180" width="100%" id="heatmap"></svg>
+</div>
+<div class="panel">
+<div class="panel-title">First-Due Apparatus Availability</div>
+<div class="panel-sub">% time available for priority calls</div>
+<table class="mini-table">
+<tr><th>Unit</th><th>Availability</th><th>Trend</th></tr>
+<tr><td>Engine 7</td><td class="val">94.2%</td><td class="trend-up">+3.1%</td></tr>
+<tr><td>Medic 3</td><td class="val">88.7%</td><td class="trend-up">+5.4%</td></tr>
+<tr><td>Ladder 1</td><td class="val">91.0%</td><td class="trend-up">+2.8%</td></tr>
+<tr><td>Engine 12</td><td class="val">86.3%</td><td class="trend-dn">-1.2%</td></tr>
+<tr><td>Medic 9</td><td class="val">92.1%</td><td class="trend-up">+4.6%</td></tr>
+</table>
+</div>
+</div>
+
+<!-- Bottom alerts -->
+<div class="alert-strip"><div class="alert-dot ok"></div><div class="alert-text">All data sources connected and reporting normally. Next scheduled sync: 3:00 PM.</div><div class="alert-time">System</div></div>
+
+</div>
+
+<script>
+// ============= GENERATE SVG CHARTS =============
+
+// 1. LINE CHART - Before/After temporal
+(function(){
+const svg=document.getElementById('line-chart');
+const preData=[168,172,155,180,165,178,160,175,185,170,162,158];
+const postData=[145,132,128,118,110,105,98,92,88,84,86,82];
+const months=['M-12','M-11','M-10','M-9','M-8','M-7','M-6','M-5','M-4','M-3','M-2','M-1','M+1','M+2','M+3','M+4','M+5','M+6','M+7','M+8','M+9','M+10','M+11','M+12'];
+const allData=[...preData,...postData];
+const maxV=200,minV=60;
+const W=700,H=220,padL=50,padR=20,padT=20,padB=30;
+const chartW=W-padL-padR,chartH=H-padT-padB;
+const n=allData.length;
+
+function x(i){return padL+i/(n-1)*chartW}
+function y(v){return padT+(maxV-v)/(maxV-minV)*chartH}
+
+// Grid
+let html=`<line x1="${padL}" y1="${padT}" x2="${padL}" y2="${H-padB}" stroke="#1E2536"/>`;
+html+=`<line x1="${padL}" y1="${H-padB}" x2="${W-padR}" y2="${H-padB}" stroke="#1E2536"/>`;
+[80,120,160,200].forEach(v=>{html+=`<line x1="${padL}" y1="${y(v)}" x2="${W-padR}" y2="${y(v)}" stroke="#1E2536" stroke-width="0.5" stroke-dasharray="4,4"/><text x="${padL-5}" y="${y(v)+4}" fill="#5A6478" font-size="10" text-anchor="end">${v}</text>`});
+
+// X labels
+months.forEach((m,i)=>{if(i%3===0)html+=`<text x="${x(i)}" y="${H-8}" fill="#5A6478" font-size="9" text-anchor="middle">${m}</text>`});
+
+// Enrollment line
+const enrollX=x(12);
+html+=`<line x1="${enrollX}" y1="${padT}" x2="${enrollX}" y2="${H-padB}" stroke="#F5A623" stroke-width="1.5" stroke-dasharray="6,4"/>`;
+html+=`<text x="${enrollX}" y="${padT-5}" fill="#F5A623" font-size="9" text-anchor="middle">AER Launch</text>`;
+
+// Pre area
+let prePoints=preData.map((v,i)=>`${x(i)},${y(v)}`).join(' ');
+html+=`<polygon points="${x(0)},${H-padB} ${prePoints} ${x(11)},${H-padB}" fill="rgba(232,108,141,0.06)"/>`;
+html+=`<polyline points="${prePoints}" fill="none" stroke="#E86C8D" stroke-width="2.5" stroke-linejoin="round"/>`;
+
+// Post area
+let postPoints=postData.map((v,i)=>`${x(i+12)},${y(v)}`).join(' ');
+html+=`<polygon points="${x(12)},${H-padB} ${postPoints} ${x(23)},${H-padB}" fill="rgba(62,207,180,0.06)"/>`;
+html+=`<polyline points="${postPoints}" fill="none" stroke="#3ECFB4" stroke-width="2.5" stroke-linejoin="round"/>`;
+
+// Dots
+preData.forEach((v,i)=>{html+=`<circle cx="${x(i)}" cy="${y(v)}" r="3" fill="#E86C8D" stroke="#080A0F" stroke-width="1.5"/>`});
+postData.forEach((v,i)=>{html+=`<circle cx="${x(i+12)}" cy="${y(v)}" r="3" fill="#3ECFB4" stroke="#080A0F" stroke-width="1.5"/>`});
+
+// Legend
+html+=`<circle cx="${padL+10}" cy="${padT+8}" r="4" fill="#E86C8D"/><text x="${padL+18}" y="${padT+12}" fill="#8892A8" font-size="10">Pre-enrollment</text>`;
+html+=`<circle cx="${padL+120}" cy="${padT+8}" r="4" fill="#3ECFB4"/><text x="${padL+128}" y="${padT+12}" fill="#8892A8" font-size="10">Post-enrollment</text>`;
+
+svg.innerHTML=html;
+})();
+
+// 2. DONUT CHART
+(function(){
+const svg=document.getElementById('donut-chart');
+const data=[{label:'Paramedic',value:42,color:'#3ECFB4'},{label:'Automatic Flag',value:28,color:'#4A9EFF'},{label:'Community',value:18,color:'#F5A623'},{label:'Self-referral',value:12,color:'#E86C8D'}];
+const total=data.reduce((s,d)=>s+d.value,0);
+const cx=80,cy=80,R=65,r=42;
+let angle=-90;
+let paths='';
+data.forEach(d=>{
+  const sweep=d.value/total*360;
+  const a1=angle*Math.PI/180,a2=(angle+sweep)*Math.PI/180;
+  const x1=cx+R*Math.cos(a1),y1=cy+R*Math.sin(a1);
+  const x2=cx+R*Math.cos(a2),y2=cy+R*Math.sin(a2);
+  const x3=cx+r*Math.cos(a2),y3=cy+r*Math.sin(a2);
+  const x4=cx+r*Math.cos(a1),y4=cy+r*Math.sin(a1);
+  const large=sweep>180?1:0;
+  paths+=`<path d="M${x1},${y1} A${R},${R} 0 ${large},1 ${x2},${y2} L${x3},${y3} A${r},${r} 0 ${large},0 ${x4},${y4}Z" fill="${d.color}" opacity="0.85"/>`;
+  angle+=sweep;
+});
+paths+=`<text x="${cx}" y="${cy-4}" fill="white" font-size="18" font-weight="700" text-anchor="middle" font-family="Fraunces,serif">${total}</text>`;
+paths+=`<text x="${cx}" y="${cy+12}" fill="#5A6478" font-size="9" text-anchor="middle">referrals</text>`;
+svg.innerHTML=paths;
+const leg=document.getElementById('donut-legend');
+leg.innerHTML=data.map(d=>`<div class="legend-item"><div class="legend-dot" style="background:${d.color}"></div>${d.label}: ${d.value}%</div>`).join('');
+})();
+
+// 3. BEFORE/AFTER stats
+(function(){
+const stats=[['911 Calls/Month','168','84'],['Transports/Month','127','84'],['ED Wall Time (min)','4,320','3,110'],['After-Midnight Runs','89','52'],['Avg Response Time','8.2 min','7.4 min'],['Patient Satisfaction','3.1/5','4.3/5']];
+document.getElementById('ba-before').innerHTML=stats.map(s=>`<div class="ba-row"><span class="ba-label">${s[0]}</span><span class="ba-val" style="color:var(--rose)">${s[1]}</span></div>`).join('');
+document.getElementById('ba-after').innerHTML=stats.map(s=>`<div class="ba-row"><span class="ba-label">${s[0]}</span><span class="ba-val" style="color:var(--green)">${s[2]}</span></div>`).join('');
+})();
+
+// 4. COST SAVINGS BAR CHART
+(function(){
+const svg=document.getElementById('cost-chart');
+const data=[28,45,62,85,110,142,178,220,268,315,380,482];
+const labels=['Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb'];
+const maxV=500,W=320,H=180,padL=40,padB=25,padT=10,padR=10;
+const chartW=W-padL-padR,chartH=H-padT-padB;
+const barW=chartW/data.length*0.7;
+let html='';
+[100,200,300,400,500].forEach(v=>{const yy=padT+(maxV-v)/maxV*chartH;html+=`<line x1="${padL}" y1="${yy}" x2="${W-padR}" y2="${yy}" stroke="#1E2536" stroke-width="0.5" stroke-dasharray="3,3"/><text x="${padL-4}" y="${yy+3}" fill="#5A6478" font-size="8" text-anchor="end">${v}K</text>`});
+data.forEach((v,i)=>{
+  const bx=padL+i/data.length*chartW+chartW/data.length*0.15;
+  const bh=v/maxV*chartH;
+  const by=padT+chartH-bh;
+  const pct=i/data.length;
+  const col=`hsl(${160+pct*20},${60+pct*10}%,${50+pct*5}%)`;
+  html+=`<rect x="${bx}" y="${by}" width="${barW}" height="${bh}" rx="3" fill="${col}" opacity="0.85"/>`;
+  if(i%2===0||i===data.length-1)html+=`<text x="${bx+barW/2}" y="${H-8}" fill="#5A6478" font-size="8" text-anchor="middle">${labels[i]}</text>`;
+});
+html+=`<text x="${W-padR}" y="${padT+chartH-data[data.length-1]/maxV*chartH-5}" fill="#3ECFB4" font-size="10" font-weight="600" text-anchor="end">$${data[data.length-1]}K</text>`;
+svg.innerHTML=html;
+})();
+
+// 5. HEATMAP
+(function(){
+const svg=document.getElementById('heatmap');
+const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const hours=[0,4,8,12,16,20];
+const W=320,H=180,padL=35,padT=15,padB=20,padR=10;
+const cols=24,rows=7;
+const cellW=(W-padL-padR)/cols;
+const cellH=(H-padT-padB)/rows;
+let html='';
+days.forEach((d,r)=>{html+=`<text x="${padL-4}" y="${padT+r*cellH+cellH/2+3}" fill="#5A6478" font-size="8" text-anchor="end">${d}</text>`});
+hours.forEach(h=>{html+=`<text x="${padL+h*cellW+cellW/2}" y="${H-5}" fill="#5A6478" font-size="8" text-anchor="middle">${String(h).padStart(2,'0')}</text>`});
+for(let r=0;r<rows;r++){for(let c=0;c<cols;c++){
+  let intensity;
+  if(c>=0&&c<6)intensity=0.3+Math.random()*0.5;
+  else if(c>=8&&c<18)intensity=0.1+Math.random()*0.3;
+  else intensity=0.2+Math.random()*0.4;
+  if(r>=5)intensity*=1.2;
+  intensity=Math.min(intensity,1);
+  const alpha=0.1+intensity*0.8;
+  html+=`<rect class="heatmap-cell" x="${padL+c*cellW}" y="${padT+r*cellH}" width="${cellW-1}" height="${cellH-1}" fill="rgba(62,207,180,${alpha.toFixed(2)})"/>`;
+}}
+svg.innerHTML=html;
+})();
+
+// Tab interactivity (visual only)
+document.querySelectorAll('.chart-tab').forEach(tab=>{
+  tab.addEventListener('click',function(){
+    this.parentElement.querySelectorAll('.chart-tab').forEach(t=>t.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>

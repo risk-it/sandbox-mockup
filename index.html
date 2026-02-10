@@ -1357,6 +1357,7 @@ body {
       <div class="step-dot active" id="dot-1"></div>
       <div class="step-dot" id="dot-2"></div>
       <div class="step-dot" id="dot-3"></div>
+      <div class="step-dot" id="dot-4"></div>
     </div>
     <div class="user-avatar">JD</div>
   </div>
@@ -1368,18 +1369,10 @@ body {
   <nav class="step-sidebar">
     <h3>Configuration Steps</h3>
     <ul class="step-list">
-      <li class="step-item active" data-step="1" onclick="goToStep(1)">
-        <div class="step-number">1</div>
-        Select Measures
-      </li>
-      <li class="step-item" data-step="2" onclick="goToStep(2)">
-        <div class="step-number">2</div>
-        Configure Settings
-      </li>
-      <li class="step-item" data-step="3" onclick="goToStep(3)">
-        <div class="step-number">3</div>
-        Review &amp; Deploy
-      </li>
+      <li class="step-item active" data-step="1" onclick="goToStep(1)"><div class="step-number">1</div>Select Measures</li>
+      <li class="step-item" data-step="2" onclick="goToStep(2)"><div class="step-number">2</div>Data Sources</li>
+      <li class="step-item" data-step="3" onclick="goToStep(3)"><div class="step-number">3</div>Deploy Settings</li>
+      <li class="step-item" data-step="4" onclick="goToStep(4)"><div class="step-number">4</div>Review &amp; Deploy</li>
     </ul>
   </nav>
 
@@ -1492,12 +1485,29 @@ body {
 
       <div class="actions-bar">
         <div></div>
-        <button class="btn btn-primary" onclick="goToStep(2)">Continue to Settings →</button>
+        <button class="btn btn-primary" onclick="goToStep(2)">Continue to Data Sources →</button>
       </div>
     </div>
 
-    <!-- STEP 2: SETTINGS -->
+    <!-- STEP 2: DATA SOURCE CONFIGURATION -->
     <div class="step-panel" id="panel-2">
+      <div class="page-header">
+        <h1>Configure Data Sources</h1>
+        <p>For each selected measure, specify how data will be collected — connect via API endpoint or upload a data file and map the key columns for calculation.</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:24px">
+        <div style="flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden"><div id="ds-progress-fill" style="height:100%;background:linear-gradient(90deg,var(--accent-green),var(--accent-blue));border-radius:3px;transition:width .4s;width:0%"></div></div>
+        <span id="ds-progress-label" style="font-size:13px;color:var(--text-muted);white-space:nowrap">0 / 0 configured</span>
+      </div>
+      <div id="ds-config-list" style="display:flex;flex-direction:column;gap:16px"></div>
+      <div class="actions-bar">
+        <button class="btn btn-secondary" onclick="goToStep(1)">← Back to Measures</button>
+        <button class="btn btn-primary" onclick="goToStep(3)">Continue to Deploy Settings →</button>
+      </div>
+    </div>
+
+    <!-- STEP 3: SETTINGS -->
+    <div class="step-panel" id="panel-3">
       <div class="page-header">
         <h1>Configure Deployment Settings</h1>
         <p>Set up the source repository and target environment for your AER dashboard sandbox.</p>
@@ -1576,13 +1586,13 @@ body {
       </div>
 
       <div class="actions-bar">
-        <button class="btn btn-secondary" onclick="goToStep(1)">← Back</button>
-        <button class="btn btn-primary" onclick="goToStep(3)">Review Configuration →</button>
+        <button class="btn btn-secondary" onclick="goToStep(2)">← Back</button>
+        <button class="btn btn-primary" onclick="goToStep(4)">Review Configuration →</button>
       </div>
     </div>
 
-    <!-- STEP 3: REVIEW & DEPLOY -->
-    <div class="step-panel" id="panel-3">
+    <!-- STEP 4: REVIEW & DEPLOY -->
+    <div class="step-panel" id="panel-4">
       <div class="page-header">
         <h1>Review &amp; Deploy</h1>
         <p>Review your configuration before deploying the dashboard sandbox.</p>
@@ -1638,9 +1648,10 @@ body {
       </div>
 
       <div class="actions-bar">
-        <button class="btn btn-secondary" onclick="goToStep(2)">← Edit Configuration</button>
+        <button class="btn btn-secondary" onclick="goToStep(3)">← Edit Settings</button>
         <div style="display: flex; gap: 12px;">
           <button class="btn btn-outline" onclick="goToStep(1)">Edit Measures</button>
+          <button class="btn btn-outline" onclick="goToStep(2)">Edit Data Sources</button>
           <button class="btn btn-primary" onclick="startDeploy()">🚀 Confirm &amp; Deploy</button>
         </div>
       </div>
@@ -1673,7 +1684,8 @@ const MEASURES = [
     description: '# of unplanned ambulance transports',
     spec: 'Number of unplanned transports up to 12 months pre-enrollment for patients receiving services from [alternate EMS response]',
     source: 'ePCR',
-    programs: ['Primary response', 'Secondary response']
+    programs: ['Primary response', 'Secondary response'],
+    keyColumns: ['patient_id','transport_date','transport_type','disposition','unit_id']
   },
   {
     id: 'pt-2',
@@ -1683,7 +1695,8 @@ const MEASURES = [
     description: 'Referral source tracking',
     spec: '# of referrals in delimited categories [paramedic] [automatic flag] [community] [self]',
     source: 'ePCR & Referral System',
-    programs: ['Secondary response']
+    programs: ['Secondary response'],
+    keyColumns: ['patient_id','referral_date','referral_source','referral_category']
   },
   {
     id: 'pt-3',
@@ -1693,7 +1706,8 @@ const MEASURES = [
     description: '911 runs (all patient encounters, regardless of transport) per specified unit of time',
     spec: 'Number of 911 calls up to 12 months pre-enrollment for patients receiving services from [alternate EMS response]',
     source: 'ePCR',
-    programs: ['Primary response', 'Secondary response']
+    programs: ['Primary response', 'Secondary response'],
+    keyColumns: ['incident_id','call_date','call_time','patient_id','unit_id']
   },
   {
     id: 'cs-1',
@@ -1703,7 +1717,8 @@ const MEASURES = [
     description: 'Ambulance transport cost savings for patients receiving services from [AER program]',
     spec: '(Ambulance transports 12mo post-enrollment × avg payment per transport) − (transports 12mo pre-enrollment × avg payment per transport)',
     source: 'ePCR',
-    programs: ['Primary response', 'Secondary response']
+    programs: ['Primary response', 'Secondary response'],
+    keyColumns: ['patient_id','transport_date','payment_amount','enrollment_date']
   },
   {
     id: 'cs-2',
@@ -1713,7 +1728,8 @@ const MEASURES = [
     description: 'Cumulative cost savings from all cost categories',
     spec: 'Sum of cost savings across each category to create composite cost savings figure',
     source: 'TBD',
-    programs: ['Primary response', 'Secondary response']
+    programs: ['Primary response', 'Secondary response'],
+    keyColumns: ['category','period','cost_traditional','cost_aer']
   },
   {
     id: 'pv-1',
@@ -1723,7 +1739,8 @@ const MEASURES = [
     description: 'The number of runs after midnight for enrolled patients',
     spec: 'Number of 911 calls between 0000–0600 up to 12 months pre-enrollment for patients receiving services from [alternate EMS response]',
     source: 'ePCR',
-    programs: ['Secondary response']
+    programs: ['Secondary response'],
+    keyColumns: ['incident_id','call_date','call_time','patient_id']
   },
   {
     id: 'pv-2',
@@ -1733,7 +1750,8 @@ const MEASURES = [
     description: 'Wall time generated by runs for enrolled patients',
     spec: 'Total number of minutes of wall time at Emergency Department up to 12 months pre-enrollment for patient population receiving services from [alternate EMS response]',
     source: 'CAD',
-    programs: ['Primary response', 'Secondary response']
+    programs: ['Primary response', 'Secondary response'],
+    keyColumns: ['incident_id','arrival_time','departure_time','facility_id','patient_id']
   },
   {
     id: 'ph-1',
@@ -1743,7 +1761,8 @@ const MEASURES = [
     description: 'Percentage of time first-due apparatus is available for high-level emergencies in first-due area',
     spec: 'TBD — measurement specification under development',
     source: 'CAD',
-    programs: ['Primary response', 'Secondary response']
+    programs: ['Primary response', 'Secondary response'],
+    keyColumns: ['unit_id','status','timestamp','zone_id']
   },
   {
     id: 'ph-2',
@@ -1753,7 +1772,8 @@ const MEASURES = [
     description: 'Emergency Department capacity utilization impact from AER programs',
     spec: 'TBD — measurement specification under development',
     source: 'Hospital data',
-    programs: ['Primary response', 'Secondary response']
+    programs: ['Primary response', 'Secondary response'],
+    keyColumns: ['facility_id','date','capacity','census','aer_patients']
   },
   {
     id: 'ph-3',
@@ -1763,7 +1783,8 @@ const MEASURES = [
     description: 'AER services delivered in areas with limited insurance coverage',
     spec: 'TBD — measurement specification under development',
     source: 'ePCR & census data',
-    programs: ['Primary response', 'Secondary response']
+    programs: ['Primary response', 'Secondary response'],
+    keyColumns: ['patient_id','service_date','zip_code','insurance_status','service_type']
   }
 ];
 
@@ -2190,54 +2211,142 @@ function handleDrop(e) {
 
 // ====================== STEP NAVIGATION ======================
 let currentStep = 1;
+let dataSourceConfig = {}; // { measureId: { method:'api'|'upload', apiUrl:'', fileName:'', columnMap:{} } }
 
 function goToStep(step) {
-  if (step === 2 && selectedMeasures.length === 0) {
+  if (step >= 2 && selectedMeasures.length === 0) {
     showToast('⚠', 'Please select at least one measure');
     return;
   }
-
   currentStep = step;
-
-  // Panels
   document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
   document.getElementById(`panel-${step}`).classList.add('active');
-
-  // Sidebar
   document.querySelectorAll('.step-item').forEach(s => {
     const sStep = parseInt(s.dataset.step);
     s.classList.remove('active', 'completed');
     if (sStep === step) s.classList.add('active');
     if (sStep < step) s.classList.add('completed');
   });
-
-  // Dots
-  for (let i = 1; i <= 3; i++) {
+  for (let i = 1; i <= 4; i++) {
     const dot = document.getElementById(`dot-${i}`);
     dot.classList.remove('active', 'completed');
     if (i === step) dot.classList.add('active');
     if (i < step) dot.classList.add('completed');
   }
-
-  // Populate review
-  if (step === 3) populateReview();
-
+  if (step === 2) renderDataSourceConfig();
+  if (step === 4) populateReview();
   window.scrollTo(0, 0);
+}
+
+// ====================== STEP 2: DATA SOURCE CONFIG ======================
+function renderDataSourceConfig() {
+  // Initialize configs for new measures
+  selectedMeasures.forEach(m => {
+    if (!dataSourceConfig[m.id]) dataSourceConfig[m.id] = { method:'api', apiUrl:'', apiKey:'', fileName:'', columnMap:{} };
+  });
+
+  const list = document.getElementById('ds-config-list');
+  const configured = selectedMeasures.filter(m => {
+    const c = dataSourceConfig[m.id];
+    return c && ((c.method==='api' && c.apiUrl) || (c.method==='upload' && c.fileName));
+  }).length;
+  document.getElementById('ds-progress-fill').style.width = (selectedMeasures.length ? configured/selectedMeasures.length*100 : 0)+'%';
+  document.getElementById('ds-progress-label').textContent = `${configured} / ${selectedMeasures.length} configured`;
+
+  const sampleCols = ['-- Select column --','incident_id','patient_id','call_date','call_time','transport_date','transport_type','disposition','unit_id','referral_source','referral_category','payment_amount','enrollment_date','arrival_time','departure_time','facility_id','status','timestamp','zone_id','capacity','census','zip_code','insurance_status','service_type','service_date'];
+
+  list.innerHTML = selectedMeasures.map((m, idx) => {
+    const cfg = dataSourceConfig[m.id];
+    const done = (cfg.method==='api' && cfg.apiUrl) || (cfg.method==='upload' && cfg.fileName);
+    const isOpen = idx === 0 ? ' open' : '';
+
+    const colMapper = m.keyColumns ? `<div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:14px;margin-top:12px"><div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);margin-bottom:10px">Column Mapping</div>${m.keyColumns.map(col => `<div style="display:grid;grid-template-columns:140px 1fr;gap:10px;align-items:center;margin-bottom:8px"><span style="font-size:12px;color:var(--text-muted)">${col.replace(/_/g,' ')}</span><select style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:6px 10px;font-size:12px;color:var(--text);font-family:'DM Sans',sans-serif" onchange="dataSourceConfig['${m.id}'].columnMap['${col}']=this.value">${sampleCols.map(sc => `<option>${sc}</option>`).join('')}</select></div>`).join('')}</div>` : '';
+
+    const apiSection = `<div style="margin-top:12px"><div style="margin-bottom:14px"><label style="display:block;font-size:12px;font-weight:500;color:var(--text-muted);margin-bottom:5px">API Endpoint URL</label><input type="text" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:9px 14px;font-size:12px;color:var(--text);font-family:'JetBrains Mono',monospace" placeholder="https://api.example.com/v1/data" value="${cfg.apiUrl||''}" oninput="dataSourceConfig['${m.id}'].apiUrl=this.value"></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><div><label style="display:block;font-size:12px;font-weight:500;color:var(--text-muted);margin-bottom:5px">Auth Type</label><select style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 14px;font-size:12px;color:var(--text);font-family:'DM Sans',sans-serif"><option>Bearer Token</option><option>API Key</option><option>Basic Auth</option><option>No Auth</option></select></div><div><label style="display:block;font-size:12px;font-weight:500;color:var(--text-muted);margin-bottom:5px">API Key / Token</label><input type="password" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:9px 14px;font-size:12px;color:var(--text)" placeholder="Enter key" oninput="dataSourceConfig['${m.id}'].apiKey=this.value"></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px"><div><label style="display:block;font-size:12px;font-weight:500;color:var(--text-muted);margin-bottom:5px">Data Format</label><select style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px;font-size:12px;color:var(--text);font-family:'DM Sans',sans-serif"><option>JSON</option><option>CSV</option><option>XML</option></select></div><div><label style="display:block;font-size:12px;font-weight:500;color:var(--text-muted);margin-bottom:5px">Refresh Interval</label><select style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px;font-size:12px;color:var(--text);font-family:'DM Sans',sans-serif"><option>Real-time</option><option>Hourly</option><option>Daily</option><option>Manual</option></select></div></div>${colMapper}</div>`;
+
+    const uploadSection = `<div style="margin-top:12px"><div style="border:2px dashed ${cfg.fileName?'var(--accent-green)':'var(--border)'};${cfg.fileName?'border-style:solid;background:var(--accent-patient-bg)':''}; border-radius:8px;padding:28px 20px;text-align:center;cursor:pointer" onclick="simulateUpload('${m.id}')"><svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="color:var(--text-dim);margin-bottom:8px"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg><p style="font-size:13px;color:${cfg.fileName?'var(--accent-green)':'var(--text-muted)'}">${cfg.fileName||'Click to upload CSV, Excel, or JSON'}</p><span style="font-size:11px;color:var(--text-dim)">${cfg.fileName?'Click to replace':'Max 50MB'}</span></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px"><div><label style="display:block;font-size:12px;font-weight:500;color:var(--text-muted);margin-bottom:5px">File Format</label><select style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px;font-size:12px;color:var(--text);font-family:'DM Sans',sans-serif"><option>CSV</option><option>Excel</option><option>JSON</option></select></div><div><label style="display:block;font-size:12px;font-weight:500;color:var(--text-muted);margin-bottom:5px">Update Schedule</label><select style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px;font-size:12px;color:var(--text);font-family:'DM Sans',sans-serif"><option>One-time</option><option>Weekly</option><option>Monthly</option><option>Automated SFTP</option></select></div></div>${colMapper}</div>`;
+
+    return `<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden" class="ds-card${isOpen}" id="ds-card-${m.id}">
+      <div style="padding:16px 20px;display:flex;align-items:center;justify-content:space-between;cursor:pointer" onclick="document.getElementById('ds-card-${m.id}').classList.toggle('open')">
+        <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+          <div style="width:10px;height:10px;border-radius:50%;background:${done?'var(--accent-green)':'var(--border)'};${done?'box-shadow:0 0 6px rgba(62,207,180,.4)':''}"></div>
+          <span style="font-size:14px;font-weight:600">${m.name}</span>
+          <span class="category-badge ${m.category}">${m.categoryLabel}</span>
+        </div>
+        <span style="color:var(--text-dim);font-size:18px;transition:transform .2s" class="ds-chev">›</span>
+      </div>
+      <div class="ds-body" style="display:none;padding:0 20px 20px">
+        <div style="font-size:12px;color:var(--text-muted);background:var(--bg);border-radius:8px;padding:12px 14px;margin-bottom:16px;line-height:1.6"><strong style="color:var(--text)">Specification:</strong> ${m.spec}<br><strong style="color:var(--text)">Default source:</strong> ${m.source}</div>
+        <div style="display:flex;gap:6px;margin-bottom:16px;background:var(--bg);border-radius:8px;padding:4px">
+          <button style="flex:1;padding:8px 12px;border-radius:6px;border:${cfg.method==='api'?'1px solid var(--border)':'none'};background:${cfg.method==='api'?'var(--surface-alt)':'transparent'};color:${cfg.method==='api'?'var(--text)':'var(--text-dim)'};font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif" onclick="event.stopPropagation();dataSourceConfig['${m.id}'].method='api';renderDataSourceConfig()">⚡ API / Endpoint</button>
+          <button style="flex:1;padding:8px 12px;border-radius:6px;border:${cfg.method==='upload'?'1px solid var(--border)':'none'};background:${cfg.method==='upload'?'var(--surface-alt)':'transparent'};color:${cfg.method==='upload'?'var(--text)':'var(--text-dim)'};font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif" onclick="event.stopPropagation();dataSourceConfig['${m.id}'].method='upload';renderDataSourceConfig()">📁 File Upload</button>
+        </div>
+        ${cfg.method === 'api' ? apiSection : uploadSection}
+        <button style="display:inline-flex;align-items:center;gap:6px;padding:8px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;background:var(--accent-patient-bg);color:var(--accent-green);font-family:'DM Sans',sans-serif;margin-top:14px" onclick="saveDSConfig('${m.id}')">✓ Save Configuration</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Apply open/close state via CSS-like toggling
+  document.querySelectorAll('.ds-card').forEach(card => {
+    const body = card.querySelector('.ds-body');
+    const chev = card.querySelector('.ds-chev');
+    if (card.classList.contains('open')) {
+      body.style.display = 'block';
+      chev.style.transform = 'rotate(90deg)';
+    }
+  });
+
+  // Re-attach toggle
+  document.querySelectorAll('.ds-card').forEach(card => {
+    const id = card.id;
+    card.querySelector('[onclick]'); // header already has onclick
+  });
+}
+
+// Override toggle for ds-cards
+const origClick = document.addEventListener('click', function(e) {
+  const card = e.target.closest('.ds-card');
+  if (!card) return;
+  const header = card.children[0];
+  if (header.contains(e.target)) {
+    const body = card.querySelector('.ds-body');
+    const chev = card.querySelector('.ds-chev');
+    const isOpen = body.style.display === 'block';
+    body.style.display = isOpen ? 'none' : 'block';
+    chev.style.transform = isOpen ? '' : 'rotate(90deg)';
+  }
+}, true);
+
+function simulateUpload(id) {
+  const names = ['ems_transport_2024.csv','patient_referrals.xlsx','cad_dispatch.csv','billing_FY2024.xlsx','incident_reports.json'];
+  dataSourceConfig[id].fileName = names[Math.floor(Math.random()*names.length)];
+  renderDataSourceConfig();
+  showToast('📎', 'File uploaded successfully');
+}
+
+function saveDSConfig(id) {
+  showToast('✓', 'Configuration saved');
+  renderDataSourceConfig();
 }
 
 // ====================== REVIEW ======================
 function populateReview() {
   document.getElementById('review-measure-count').textContent = selectedMeasures.length;
 
-  document.getElementById('review-measures-list').innerHTML = selectedMeasures.map(m => `
+  document.getElementById('review-measures-list').innerHTML = selectedMeasures.map(m => {
+    const cfg = dataSourceConfig[m.id] || {};
+    const dsLabel = cfg.method==='api' ? (cfg.apiUrl ? 'API: '+cfg.apiUrl.substring(0,40)+'…' : 'API: Not configured') : (cfg.fileName || 'Upload: Not configured');
+    return `
     <div class="review-measure-item">
       <div class="rm-icon ${m.category}"></div>
       <div>
         <div class="rm-name">${m.name}</div>
         <div class="rm-cat">${m.categoryLabel}</div>
+        <div style="font-size:11px;color:var(--accent-blue);margin-top:3px">⚡ ${dsLabel}</div>
       </div>
     </div>
-  `).join('');
+  `}).join('');
 
   document.getElementById('review-repo').textContent = document.getElementById('repo-url').value || '—';
   document.getElementById('review-branch').textContent = document.getElementById('repo-branch').value;
@@ -2328,7 +2437,7 @@ function showSuccess() {
       <div class="value">${targetUrl}/dashboard</div>
     </div>
     <div style="display:flex;gap:12px;justify-content:center;">
-      <button class="btn btn-primary" onclick="window.open('#','_blank');cancelDeploy();">Open Dashboard →</button>
+      <button class="btn btn-primary" onclick="window.open('dashboard.html','_blank');cancelDeploy();">Open Dashboard →</button>
       <button class="btn btn-secondary" onclick="cancelDeploy()">Close</button>
     </div>
   `;
