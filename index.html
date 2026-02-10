@@ -872,6 +872,302 @@ body {
   font-size: 28px;
 }
 
+/* TAG EXPLORER */
+.tag-explorer {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+
+.tag-explorer-header {
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s;
+}
+
+.tag-explorer.open .tag-explorer-header {
+  border-bottom-color: var(--border);
+}
+
+.tag-explorer-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.tag-explorer-title svg { color: var(--accent-blue); }
+
+.tag-explorer-toggle {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: all 0.2s;
+}
+
+.tag-explorer-toggle:hover { border-color: var(--border-light); color: var(--text); }
+
+.tag-explorer-toggle svg {
+  transition: transform 0.3s ease;
+}
+
+.tag-explorer.open .tag-explorer-toggle svg {
+  transform: rotate(0deg);
+}
+
+.tag-explorer:not(.open) .tag-explorer-toggle svg {
+  transform: rotate(180deg);
+}
+
+.tag-explorer-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease;
+}
+
+.tag-explorer.open .tag-explorer-body {
+  max-height: 500px;
+}
+
+.tag-explorer-content {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 20px;
+  padding: 18px 20px 20px;
+}
+
+.tag-facets {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.tag-facet-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tag-facet-label svg { opacity: 0.6; }
+
+.tag-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tag-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid var(--border);
+  background: var(--surface-alt);
+  color: var(--text-muted);
+  user-select: none;
+}
+
+.tag-chip:hover {
+  border-color: var(--border-light);
+  color: var(--text);
+  background: var(--surface-hover);
+}
+
+.tag-chip.active {
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
+  background: rgba(74, 158, 255, 0.1);
+}
+
+.tag-chip.active.source-epcr { border-color: #4A9EFF; color: #4A9EFF; background: rgba(74, 158, 255, 0.1); }
+.tag-chip.active.source-cad { border-color: #B48EFF; color: #B48EFF; background: rgba(180, 142, 255, 0.1); }
+.tag-chip.active.source-referral { border-color: #FF9F43; color: #FF9F43; background: rgba(255, 159, 67, 0.1); }
+.tag-chip.active.source-hospital { border-color: #FF6B81; color: #FF6B81; background: rgba(255, 107, 129, 0.1); }
+.tag-chip.active.source-census { border-color: #1DD1A1; color: #1DD1A1; background: rgba(29, 209, 161, 0.1); }
+.tag-chip.active.source-tbd { border-color: #778CA3; color: #778CA3; background: rgba(119, 140, 163, 0.1); }
+
+.tag-chip.active.program-primary { border-color: var(--accent-patient); color: var(--accent-patient); background: var(--accent-patient-bg); }
+.tag-chip.active.program-secondary { border-color: var(--accent-provider); color: var(--accent-provider); background: var(--accent-provider-bg); }
+
+.tag-chip.active.cat-patient { border-color: var(--accent-patient); color: var(--accent-patient); background: var(--accent-patient-bg); }
+.tag-chip.active.cat-cost { border-color: var(--accent-cost); color: var(--accent-cost); background: var(--accent-cost-bg); }
+.tag-chip.active.cat-provider { border-color: var(--accent-provider); color: var(--accent-provider); background: var(--accent-provider-bg); }
+.tag-chip.active.cat-population { border-color: var(--accent-population); color: var(--accent-population); background: var(--accent-population-bg); }
+
+.tag-chip-count {
+  background: rgba(255,255,255,0.06);
+  border-radius: 10px;
+  padding: 0 6px;
+  font-size: 10px;
+  font-weight: 600;
+  min-width: 18px;
+  text-align: center;
+  line-height: 18px;
+}
+
+.tag-chip.active .tag-chip-count {
+  background: rgba(255,255,255,0.1);
+}
+
+.tag-visual {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.tag-visual-title {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+  margin-bottom: 14px;
+}
+
+.tag-bar-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 14px;
+  flex: 1;
+}
+
+.tag-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tag-bar-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  width: 64px;
+  flex-shrink: 0;
+  text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tag-bar-track {
+  flex: 1;
+  height: 22px;
+  background: var(--surface-alt);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.tag-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.4s ease;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 6px;
+  font-size: 10px;
+  font-weight: 600;
+  color: rgba(0,0,0,0.7);
+  min-width: 24px;
+}
+
+.tag-bar-fill.cat-patient { background: var(--accent-patient); }
+.tag-bar-fill.cat-cost { background: var(--accent-cost); }
+.tag-bar-fill.cat-provider { background: var(--accent-provider); }
+.tag-bar-fill.cat-population { background: var(--accent-population); }
+
+.active-filters {
+  border-top: 1px solid var(--border);
+  padding-top: 10px;
+}
+
+.active-filters-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+  margin-bottom: 6px;
+}
+
+.active-filters-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.active-filter-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 500;
+  background: rgba(74, 158, 255, 0.1);
+  color: var(--accent-blue);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.active-filter-pill:hover {
+  background: rgba(74, 158, 255, 0.2);
+}
+
+.active-filter-pill .pill-x {
+  font-size: 12px;
+  opacity: 0.6;
+  line-height: 1;
+}
+
+.no-active-filters {
+  font-size: 11px;
+  color: var(--text-dim);
+  font-style: italic;
+}
+
+.clear-all-filters {
+  font-size: 11px;
+  color: var(--accent-blue);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px 0;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  margin-left: 4px;
+}
+
+.clear-all-filters:hover { text-decoration: underline; }
+
 .config-inner-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -910,6 +1206,8 @@ body {
   .review-detail-grid { grid-template-columns: 1fr; }
   .top-bar { padding: 0 20px; }
   .deploy-modal { width: 90vw; max-width: 480px; padding: 32px 24px; }
+  .tag-explorer-content { grid-template-columns: 1fr; }
+  .tag-visual { margin-top: 4px; }
 }
 
 /* RESPONSIVE: Small tablets / large phones (600–767px) */
@@ -971,6 +1269,13 @@ body {
   .deploy-step { font-size: 12px; padding: 8px 0; }
   .toast { left: 12px; right: 12px; bottom: 12px; font-size: 13px; }
   .search-bar input { font-size: 13px; padding: 8px 12px 8px 34px; }
+  .tag-explorer-content { grid-template-columns: 1fr; gap: 14px; padding: 14px; }
+  .tag-chip { padding: 4px 10px; font-size: 11px; }
+  .tag-chip-count { font-size: 9px; min-width: 16px; line-height: 16px; }
+  .tag-bar-label { width: 50px; font-size: 10px; }
+  .tag-bar-track { height: 18px; }
+  .tag-explorer-header { padding: 12px 14px; }
+  .tag-explorer-title { font-size: 13px; }
 }
 
 /* RESPONSIVE: Very small phones (< 380px) */
@@ -1086,6 +1391,53 @@ body {
       <div class="page-header">
         <h1>Select Performance Measures</h1>
         <p>Browse the measure bank below and add the measures that fit your local AER program. Drag measures to the selection panel, or click the + button.</p>
+      </div>
+
+      <!-- TAG EXPLORER -->
+      <div class="tag-explorer" id="tag-explorer">
+        <div class="tag-explorer-header">
+          <div class="tag-explorer-title">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+            <span>Browse by Tags</span>
+          </div>
+          <button class="tag-explorer-toggle" id="tag-explorer-toggle" onclick="toggleTagExplorer()">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 15l-6-6-6 6"/></svg>
+          </button>
+        </div>
+        <div class="tag-explorer-body" id="tag-explorer-body">
+          <div class="tag-explorer-content">
+            <!-- Left: Tag facets -->
+            <div class="tag-facets">
+              <div class="tag-facet-group">
+                <div class="tag-facet-label">
+                  <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+                  Data Source
+                </div>
+                <div class="tag-chips" id="tags-source"></div>
+              </div>
+              <div class="tag-facet-group">
+                <div class="tag-facet-label">
+                  <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+                  Program Type
+                </div>
+                <div class="tag-chips" id="tags-program"></div>
+              </div>
+              <div class="tag-facet-group">
+                <div class="tag-facet-label">
+                  <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+                  Category
+                </div>
+                <div class="tag-chips" id="tags-category"></div>
+              </div>
+            </div>
+            <!-- Right: Visual summary -->
+            <div class="tag-visual">
+              <div class="tag-visual-title">Measure Distribution</div>
+              <div class="tag-bar-chart" id="tag-bar-chart"></div>
+              <div class="active-filters" id="active-filters"></div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="measure-layout">
@@ -1419,12 +1771,228 @@ let selectedMeasures = [];
 let currentFilter = 'all';
 let searchQuery = '';
 
+// Tag filter state
+let activeTagFilters = {
+  source: [],    // e.g. ['ePCR', 'CAD']
+  program: [],   // e.g. ['Primary response']
+  category: []   // e.g. ['patient', 'cost']
+};
+
+// ====================== TAG EXPLORER ======================
+
+function buildTagIndex() {
+  // Extract all unique tags from MEASURES
+  const sources = {};
+  const programs = {};
+  const categories = {};
+
+  MEASURES.forEach(m => {
+    // Source — split compound sources like "ePCR & Referral System" into atoms
+    const sourceParts = m.source.split(/\s*&\s*/);
+    sourceParts.forEach(s => {
+      const normalized = s.trim();
+      if (!sources[normalized]) sources[normalized] = [];
+      sources[normalized].push(m.id);
+    });
+
+    // Programs
+    m.programs.forEach(p => {
+      if (!programs[p]) programs[p] = [];
+      programs[p].push(m.id);
+    });
+
+    // Categories
+    if (!categories[m.category]) categories[m.category] = { label: m.categoryLabel, ids: [] };
+    categories[m.category].ids.push(m.id);
+  });
+
+  return { sources, programs, categories };
+}
+
+const TAG_INDEX = buildTagIndex();
+
+function getSourceChipClass(source) {
+  const s = source.toLowerCase();
+  if (s.includes('epcr')) return 'source-epcr';
+  if (s.includes('cad')) return 'source-cad';
+  if (s.includes('referral')) return 'source-referral';
+  if (s.includes('hospital')) return 'source-hospital';
+  if (s.includes('census')) return 'source-census';
+  if (s.includes('tbd')) return 'source-tbd';
+  return '';
+}
+
+function renderTagExplorer() {
+  // Sources
+  const sourceContainer = document.getElementById('tags-source');
+  sourceContainer.innerHTML = Object.entries(TAG_INDEX.sources).map(([name, ids]) => {
+    const isActive = activeTagFilters.source.includes(name);
+    const chipClass = getSourceChipClass(name);
+    return `<div class="tag-chip ${isActive ? 'active ' + chipClass : ''}" onclick="toggleTagFilter('source','${name.replace(/'/g, "\\'")}')">
+      ${name}
+      <span class="tag-chip-count">${ids.length}</span>
+    </div>`;
+  }).join('');
+
+  // Programs
+  const programContainer = document.getElementById('tags-program');
+  programContainer.innerHTML = Object.entries(TAG_INDEX.programs).map(([name, ids]) => {
+    const isActive = activeTagFilters.program.includes(name);
+    const cls = name.includes('Primary') ? 'program-primary' : 'program-secondary';
+    return `<div class="tag-chip ${isActive ? 'active ' + cls : ''}" onclick="toggleTagFilter('program','${name}')">
+      ${name}
+      <span class="tag-chip-count">${ids.length}</span>
+    </div>`;
+  }).join('');
+
+  // Categories
+  const catContainer = document.getElementById('tags-category');
+  catContainer.innerHTML = Object.entries(TAG_INDEX.categories).map(([key, obj]) => {
+    const isActive = activeTagFilters.category.includes(key);
+    return `<div class="tag-chip ${isActive ? 'active cat-' + key : ''}" onclick="toggleTagFilter('category','${key}')">
+      ${obj.label}
+      <span class="tag-chip-count">${obj.ids.length}</span>
+    </div>`;
+  }).join('');
+
+  // Bar chart
+  renderTagBarChart();
+
+  // Active filters summary
+  renderActiveFilters();
+}
+
+function renderTagBarChart() {
+  const chart = document.getElementById('tag-bar-chart');
+  const total = MEASURES.length;
+  const filtered = getTagFilteredMeasures();
+  const catCounts = {};
+
+  ['patient', 'cost', 'provider', 'population'].forEach(cat => {
+    catCounts[cat] = filtered.filter(m => m.category === cat).length;
+  });
+
+  const labels = { patient: 'Patient', cost: 'Cost', provider: 'Provider', population: 'Population' };
+
+  chart.innerHTML = Object.entries(catCounts).map(([cat, count]) => {
+    const pct = total > 0 ? (count / total * 100) : 0;
+    return `<div class="tag-bar-row">
+      <span class="tag-bar-label">${labels[cat]}</span>
+      <div class="tag-bar-track">
+        <div class="tag-bar-fill cat-${cat}" style="width:${Math.max(pct, 4)}%">${count}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderActiveFilters() {
+  const container = document.getElementById('active-filters');
+  const allFilters = [];
+
+  activeTagFilters.source.forEach(v => allFilters.push({ type: 'source', value: v, label: v }));
+  activeTagFilters.program.forEach(v => allFilters.push({ type: 'program', value: v, label: v }));
+  activeTagFilters.category.forEach(v => allFilters.push({
+    type: 'category',
+    value: v,
+    label: TAG_INDEX.categories[v]?.label || v
+  }));
+
+  if (allFilters.length === 0) {
+    container.innerHTML = `<div class="active-filters-label">Active Filters</div>
+      <div class="no-active-filters">No filters active — showing all measures</div>`;
+    return;
+  }
+
+  container.innerHTML = `
+    <div class="active-filters-label">Active Filters
+      <button class="clear-all-filters" onclick="clearAllTagFilters()">Clear all</button>
+    </div>
+    <div class="active-filters-list">
+      ${allFilters.map(f =>
+        `<span class="active-filter-pill" onclick="toggleTagFilter('${f.type}','${f.value.replace(/'/g, "\\'")}')">
+          ${f.label} <span class="pill-x">✕</span>
+        </span>`
+      ).join('')}
+    </div>
+  `;
+}
+
+function toggleTagFilter(type, value) {
+  const arr = activeTagFilters[type];
+  const idx = arr.indexOf(value);
+  if (idx > -1) {
+    arr.splice(idx, 1);
+  } else {
+    arr.push(value);
+  }
+
+  // Sync category tab if category tags are used
+  if (type === 'category') {
+    if (activeTagFilters.category.length === 1) {
+      currentFilter = activeTagFilters.category[0];
+    } else {
+      currentFilter = 'all';
+    }
+    // Update category tabs visual
+    document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+    const activeTab = document.querySelector(`.category-tab[data-cat="${currentFilter}"]`);
+    if (activeTab) activeTab.classList.add('active');
+  }
+
+  renderTagExplorer();
+  renderAvailableMeasures();
+}
+
+function clearAllTagFilters() {
+  activeTagFilters.source = [];
+  activeTagFilters.program = [];
+  activeTagFilters.category = [];
+  currentFilter = 'all';
+  document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+  document.querySelector('.category-tab[data-cat="all"]').classList.add('active');
+  renderTagExplorer();
+  renderAvailableMeasures();
+}
+
+function getTagFilteredMeasures() {
+  let result = [...MEASURES];
+
+  // Source filter (OR within group)
+  if (activeTagFilters.source.length > 0) {
+    result = result.filter(m => {
+      const parts = m.source.split(/\s*&\s*/).map(s => s.trim());
+      return activeTagFilters.source.some(f => parts.includes(f));
+    });
+  }
+
+  // Program filter (OR within group)
+  if (activeTagFilters.program.length > 0) {
+    result = result.filter(m =>
+      activeTagFilters.program.some(f => m.programs.includes(f))
+    );
+  }
+
+  // Category filter (OR within group)
+  if (activeTagFilters.category.length > 0) {
+    result = result.filter(m => activeTagFilters.category.includes(m.category));
+  }
+
+  return result;
+}
+
+function toggleTagExplorer() {
+  document.getElementById('tag-explorer').classList.toggle('open');
+}
+
 // ====================== RENDER ======================
 function renderAvailableMeasures() {
   const container = document.getElementById('available-measures');
-  let filtered = MEASURES.filter(m => !selectedMeasures.find(s => s.id === m.id));
 
-  if (currentFilter !== 'all') {
+  // Start with tag-filtered set
+  let filtered = getTagFilteredMeasures().filter(m => !selectedMeasures.find(s => s.id === m.id));
+
+  // Apply category tab filter (only if no category tag filters are active)
+  if (currentFilter !== 'all' && activeTagFilters.category.length === 0) {
     filtered = filtered.filter(m => m.category === currentFilter);
   }
 
@@ -1433,7 +2001,8 @@ function renderAvailableMeasures() {
     filtered = filtered.filter(m =>
       m.name.toLowerCase().includes(q) ||
       m.description.toLowerCase().includes(q) ||
-      m.categoryLabel.toLowerCase().includes(q)
+      m.categoryLabel.toLowerCase().includes(q) ||
+      m.source.toLowerCase().includes(q)
     );
   }
 
@@ -1495,9 +2064,9 @@ function createMeasureCardHTML(measure, isSelected) {
       </div>
       <div class="spec-content">${measure.spec}</div>
       <div class="card-meta">
-        <span class="category-badge ${measure.category}">${measure.categoryLabel}</span>
-        <span class="meta-tag source">${measure.source}</span>
-        ${measure.programs.map(p => `<span class="meta-tag program">${p}</span>`).join('')}
+        <span class="category-badge ${measure.category}" onclick="event.stopPropagation();activateTagFromCard('category','${measure.category}')" style="cursor:pointer" title="Filter by category">${measure.categoryLabel}</span>
+        ${measure.source.split(/\s*&\s*/).map(s => `<span class="meta-tag source" onclick="event.stopPropagation();activateTagFromCard('source','${s.trim().replace(/'/g, "\\'")}')" style="cursor:pointer" title="Filter by data source">${s.trim()}</span>`).join('')}
+        ${measure.programs.map(p => `<span class="meta-tag program" onclick="event.stopPropagation();activateTagFromCard('program','${p}')" style="cursor:pointer" title="Filter by program type">${p}</span>`).join('')}
       </div>
     </div>
   `;
@@ -1508,6 +2077,7 @@ function addMeasure(id) {
   const m = MEASURES.find(x => x.id === id);
   if (m && !selectedMeasures.find(s => s.id === id)) {
     selectedMeasures.push(m);
+    renderTagExplorer();
     renderAvailableMeasures();
     renderSelectedMeasures();
     showToast('✓', `${m.name} added`);
@@ -1517,6 +2087,7 @@ function addMeasure(id) {
 function removeMeasure(id) {
   const m = selectedMeasures.find(x => x.id === id);
   selectedMeasures = selectedMeasures.filter(x => x.id !== id);
+  renderTagExplorer();
   renderAvailableMeasures();
   renderSelectedMeasures();
   if (m) showToast('–', `${m.name} removed`);
@@ -1526,11 +2097,45 @@ function filterCategory(cat) {
   currentFilter = cat;
   document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
   document.querySelector(`.category-tab[data-cat="${cat}"]`).classList.add('active');
+
+  // Sync category tag filters
+  if (cat === 'all') {
+    activeTagFilters.category = [];
+  } else {
+    activeTagFilters.category = [cat];
+  }
+
+  renderTagExplorer();
   renderAvailableMeasures();
 }
 
 function searchMeasures(val) {
   searchQuery = val;
+  renderAvailableMeasures();
+}
+
+function activateTagFromCard(type, value) {
+  // Ensure the tag explorer is open
+  const explorer = document.getElementById('tag-explorer');
+  if (!explorer.classList.contains('open')) {
+    explorer.classList.add('open');
+  }
+
+  // Toggle the filter
+  if (!activeTagFilters[type].includes(value)) {
+    // If category, replace rather than add
+    if (type === 'category') {
+      activeTagFilters.category = [value];
+      currentFilter = value;
+      document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+      const tab = document.querySelector(`.category-tab[data-cat="${value}"]`);
+      if (tab) tab.classList.add('active');
+    } else {
+      activeTagFilters[type].push(value);
+    }
+  }
+
+  renderTagExplorer();
   renderAvailableMeasures();
 }
 
@@ -1739,6 +2344,8 @@ function showToast(icon, msg) {
 }
 
 // ====================== INIT ======================
+document.getElementById('tag-explorer').classList.add('open');
+renderTagExplorer();
 renderAvailableMeasures();
 renderSelectedMeasures();
 </script>
